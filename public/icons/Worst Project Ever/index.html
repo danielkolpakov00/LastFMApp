@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Win a Car - Enter Your Email</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Merienda Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Merienda:wght@300;700&display=swap" rel="stylesheet">
+  <script src="script.js"></script>
+  <link href="style.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 flex items-center justify-center min-h-screen p-4">
+  <div id="mainContainer" class="bg-gray-800 p-14 rounded-lg text-center text-white max-w-xl mx-auto space-y-8">
+    <h1 class="merienda text-4xl animate-text">Enter Your Email to Win a Car!</h1>
+    <form id="initialEmailForm" class="space-y-6">
+      <div>
+        <input type="email" id="userEmailInput" name="userEmailInput" placeholder="example@email.com" class="bg-gray-700 border border-gray-600 rounded px-4 py-2 text-center w-full text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <button type="button" id="submitEmailButton" class="relative overflow-hidden border border-green-500 text-green-500 px-6 py-2 rounded-full group transition-all duration-500 w-full">
+        <span class="relative z-20 transition-all duration-500 group-hover:text-white">Submit Email!</span>
+        <span class="absolute inset-0 left-0 top-0 h-full w-full bg-green-500 rounded-full transform scale-x-0 origin-left transition-all duration-500 group-hover:scale-x-[1]"></span>
+      </button>
+    </form>
+    <div id="fullForm" style="display: none;">
+      <form id="emailForm" class="space-y-6 mt-6">
+        <div class="space-y-6">
+          <div>
+            <label for="emailLength" class="block text-lg font-medium mb-2 text-white">Email Length (max 30)</label>
+            <input type="number" id="emailLength" name="emailLength" class="bg-gray-700 border border-gray-600 rounded px-4 py-2 text-center w-full text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label for="atPosition" class="block text-lg font-medium mb-2 text-white">Position of @ Symbol</label>
+            <select id="atPosition" name="atPosition" class="bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </select>
+          </div>
+          <div>
+            <label for="tld" class="block text-lg font-medium mb-2 text-white">Top-Level Domain (TLD)</label>
+            <select id="tld" name="tld" class="bg-gray-700 border border-gray-600 rounded px-4 py-2 text-white w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value=".com">.com</option>
+              <option value=".net">.net</option>
+              <option value=".org">.org</option>
+              <option value=".io">.io</option>
+              <option value=".ca">.ca</option>
+            </select>
+          </div>
+        </div>
+        <div id="emailDisplay" class="flex items-center justify-center space-x-6 mt-8 overflow-x">
+
+        </div>
+
+        <button type="button" id="rollEmail" class="relative overflow-hidden border border-blue-500 text-blue-500 px-6 py-2 rounded-full group transition-all duration-500 w-full mt-8">
+          <span class="relative z-20 transition-all duration-500 group-hover:text-white">Roll Email</span>
+          <span class="absolute inset-0 left-0 top-0 h-full w-full bg-blue-500 rounded-full transform scale-x-0 origin-left transition-all duration-500 group-hover:scale-x-[1]"></span>
+        </button>
+
+        <div id="crashContainer" class="mt-8">
+          <label for="crashInput" class="block text-lg font-medium text-white">
+            Type in this box:
+          </label>
+          <div id="crashInput" contenteditable="true" placeholder="Type something..." class="bg-gray-700 border border-gray-600 rounded px-4 py-2 text-center w-full text-white focus:outline-none focus:ring-2 focus:ring-blue-500"></div>
+        </div>
+ 
+        <button type="button" id="submitEmailButtonFullForm" class="relative overflow-hidden border border-green-500 text-green-500 px-6 py-2 rounded-full group transition-all duration-500 w-full mt-4">
+          <span class="relative z-20 transition-all duration-500 group-hover:text-white">Submit Email!</span>
+          <span class="absolute inset-0 left-0 top-0 h-full w-full bg-green-500 rounded-full transform scale-x-0 origin-left transition-all duration-500 group-hover:scale-x-[1]"></span>
+        </button>
+      </form>
+    </div>
+  </div>
+  <div id="errorToast" class="fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded shadow-md flex items-center space-x-2" style="display: none;">
+    <i class="fas fa-times-circle"></i>
+    <span id="errorMessage"></span>
+  </div>
+</body>
+</html>

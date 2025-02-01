@@ -11,14 +11,19 @@ const Navbar = ({ openWindows }) => {
   const [clickCount, setClickCount] = useState(0);
 
   useEffect(() => {
+    let clickTimes = [];
+    
     const handleClick = () => {
-      setClickCount(prev => {
-        if (prev >= 4) {
-          setShowBSOD(true);
-          return 0;
-        }
-        return prev + 1;
-      });
+      const now = Date.now();
+      clickTimes.push(now);
+      
+      // Only keep clicks from the last second
+      clickTimes = clickTimes.filter(time => now - time < 600);
+      
+      if (clickTimes.length >= 5) {
+        setShowBSOD(true);
+        clickTimes = [];
+      }
     };
 
     window.addEventListener('click', handleClick);
