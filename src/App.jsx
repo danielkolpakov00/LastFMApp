@@ -11,58 +11,32 @@ import StartMenu from './components/StartMenu';
 import Minesweeper from './components/Minesweeper';
 import AssetPreloader from './components/AssetPreloader';
 import Paint from './components/Paint';
+import { useDraggableWindow } from './hooks/useDraggableWindow';
 
 function App() {
   const NAVBAR_HEIGHT = 36;
   const TASKBAR_HEIGHT = 36;
 
-  // Add new function to calculate window dimensions
-  const getWindowDimensions = () => {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+  const {
+    position, 
+    windowSize,
+    windowState,
+    isDragging,
+    isResizing,
+    resizeEdge,
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    handleResizeStart,
+    handleResizeEnd,
+    handleMinimize,
+    handleMaximize,
+    handleClose,
+    setPosition,           // Add this
+    getWindowDimensions,   // Add this
+    setWindowState        // Add this
+  } = useDraggableWindow(NAVBAR_HEIGHT, TASKBAR_HEIGHT);
 
-    // Mobile
-    if (width < 768) {
-      return {
-        width: width * 0.95,
-        height: height * 0.7,
-        initialX: width * 0.025,
-        initialY: NAVBAR_HEIGHT + 10
-      };
-    }
-    // Tablet
-    if (width < 1024) {
-      return {
-        width: width * 0.85,
-        height: height * 0.75,
-        initialX: width * 0.075,
-        initialY: NAVBAR_HEIGHT + 20
-      };
-    }
-    // Desktop
-    return {
-      width: Math.min(1024, width * 0.8),
-      height: Math.min(768, height - NAVBAR_HEIGHT - TASKBAR_HEIGHT - 40),
-      initialX: (width - Math.min(1024, width * 0.8)) / 2,
-      initialY: NAVBAR_HEIGHT + 20
-    };
-  };
-
-  // Initialize position with calculated values
-  const [position, setPosition] = useState(() => ({
-    x: getWindowDimensions().initialX,
-    y: getWindowDimensions().initialY
-  }));
-
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [windowState, setWindowState] = useState({
-    id: 'main-window',
-    isMinimized: false,
-    isMaximized: false,
-    isVisible: true,
-    title: 'Last.fm Explorer'
-  });
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
   const [showMinesweeper, setShowMinesweeper] = useState(false);
   const [showPaint, setShowPaint] = useState(false);
@@ -74,16 +48,8 @@ function App() {
   const [openWindows, setOpenWindows] = useState({
     explorer: true,
     minesweeper: false,
-    paint: false
+    paint: false  
   });
-
-  // Add new state for resizing
-  const [isResizing, setIsResizing] = useState(false);
-  const [resizeEdge, setResizeEdge] = useState(null);
-  const [windowSize, setWindowSize] = useState(() => ({
-    width: getWindowDimensions().width,
-    height: getWindowDimensions().height
-  }));
 
   const [activeWindow, setActiveWindow] = useState('explorer'); // Add this new state
 
@@ -108,91 +74,6 @@ function App() {
     setOpenWindows(prev => ({ ...prev, paint: true }));
     setIsStartMenuOpen(false);
     handleWindowFocus('paint');
-  };
-
-  const handleMouseDown = (e) => {
-    handleWindowFocus('explorer'); // Focus main window when clicking its title bar
-    if (!windowState.isMaximized) {
-      setIsDragging(true);
-      // Calculate offset relative to current window position
-      setDragOffset({
-        x: e.clientX - position.x,
-        y: e.clientY - position.y
-      });
-      setZIndex(prev => prev + 1);
-    }
-  };
-
-  const handleMouseMove = (e) => {
-    if (isDragging && !isResizing && !windowState.isMaximized) {
-      // Calculate new position based on current mouse position and offset
-      const newX = Math.min(
-        Math.max(0, e.clientX - dragOffset.x),
-        window.innerWidth - windowSize.width
-      );
-      const newY = Math.min(
-        Math.max(NAVBAR_HEIGHT, e.clientY - dragOffset.y),
-        window.innerHeight - TASKBAR_HEIGHT - windowSize.height
-      );
-      
-      setPosition({ x: newX, y: newY });
-    } else if (isResizing) {
-      let newWidth = windowSize.width;
-      let newHeight = windowSize.height;
-      let newX = position.x;
-      let newY = position.y;
-
-      switch (resizeEdge) {
-        case 'right':
-          newWidth = Math.max(300, e.clientX - position.x);
-          break;
-        case 'bottom':
-          newHeight = Math.max(200, e.clientY - position.y);
-          break;
-        case 'bottom-right':
-          newWidth = Math.max(300, e.clientX - position.x);
-          newHeight = Math.max(200, e.clientY - position.y);
-          break;
-        case 'top-left':
-          newWidth = Math.max(300, windowSize.width + (position.x - e.clientX));
-          newHeight = Math.max(200, windowSize.height + (position.y - e.clientY));
-          newX = e.clientX;
-          newY = e.clientY;
-          break;
-        case 'top-right':
-          newWidth = Math.max(300, e.clientX - position.x);
-          newHeight = Math.max(200, windowSize.height + (position.y - e.clientY));
-          newY = e.clientY;
-          break;
-        case 'bottom-left':
-          newWidth = Math.max(300, windowSize.width + (position.x - e.clientX));
-          newHeight = Math.max(200, e.clientY - position.y);
-          newX = e.clientX;
-          break;
-      }
-
-      setWindowSize({ width: newWidth, height: newHeight });
-      setPosition({ x: newX, y: newY });
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    setIsResizing(false);
-    setResizeEdge(null);
-  };
-
-  const handleMinimize = () => {
-    setWindowState(prev => ({ ...prev, isMinimized: true }));
-  };
-
-  const handleMaximize = () => {
-    setWindowState(prev => ({ ...prev, isMaximized: !prev.isMaximized }));
-  };
-
-  const handleClose = () => {
-    setWindowState(prev => ({ ...prev, isVisible: false }));
-    setOpenWindows(prev => ({ ...prev, explorer: false }));
   };
 
   const toggleStartMenu = () => {
@@ -245,7 +126,7 @@ function App() {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [windowState.isMaximized]);
+  }, [windowState.isMaximized, getWindowDimensions, setPosition]);
 
   React.useEffect(() => {
     setPosition(prev => ({
@@ -253,61 +134,6 @@ function App() {
       y: Math.max(NAVBAR_HEIGHT, prev.y)
     }));
   }, []);
-
-  // Add resize handlers
-  const handleResizeStart = (e, edge) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsResizing(true);
-    setResizeEdge(edge);
-    setZIndex(prev => prev + 1);
-  };
-
-  const handleResizeMove = (e) => {
-    if (!isResizing || windowState.isMaximized) return;
-
-    let newWidth = windowSize.width;
-    let newHeight = windowSize.height;
-    let newX = position.x;
-    let newY = position.y;
-
-    switch (resizeEdge) {
-      case 'right':
-        newWidth = Math.max(300, e.clientX - position.x);
-        break;
-      case 'bottom':
-        newHeight = Math.max(200, e.clientY - position.y);
-        break;
-      case 'bottom-right':
-        newWidth = Math.max(300, e.clientX - position.x);
-        newHeight = Math.max(200, e.clientY - position.y);
-        break;
-      case 'top-left':
-        newWidth = Math.max(300, windowSize.width + (position.x - e.clientX));
-        newHeight = Math.max(200, windowSize.height + (position.y - e.clientY));
-        newX = e.clientX;
-        newY = e.clientY;
-        break;
-      case 'top-right':
-        newWidth = Math.max(300, e.clientX - position.x);
-        newHeight = Math.max(200, windowSize.height + (position.y - e.clientY));
-        newY = e.clientY;
-        break;
-      case 'bottom-left':
-        newWidth = Math.max(300, windowSize.width + (position.x - e.clientX));
-        newHeight = Math.max(200, e.clientY - position.y);
-        newX = e.clientX;
-        break;
-    }
-
-    setWindowSize({ width: newWidth, height: newHeight });
-    setPosition({ x: newX, y: newY });
-  };
-
-  const handleResizeEnd = () => {
-    setIsResizing(false);
-    setResizeEdge(null);
-  };
 
   // Add to existing event listeners
   React.useEffect(() => {
@@ -352,6 +178,7 @@ function App() {
         onMouseLeave={handleMouseUp}
       >
         <video
+          src="/bliss.mp4"
           autoPlay
           loop
           muted
@@ -377,10 +204,8 @@ function App() {
               };
             }
           }}
-        >
-          <source src="/bliss.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        ></video>
+     
         <Navbar openWindows={openWindows} />
         {windowState.isVisible && !windowState.isMinimized && (
           <div 

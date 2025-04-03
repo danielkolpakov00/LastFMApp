@@ -96,21 +96,21 @@ const getAppStyle = (windowId) => ({
       bottom: 0,
       left: 0,
       width: '100%',
-      padding: 0, // Added to ensure no padding
-      background: 'linear-gradient(to bottom, #2584ff 0%, #2584ff 5%, #1159d5 8%, #1159d5 95%, #0b47a8 100%)',
-      display: 'flex',
-      alignItems: 'center',
-      zIndex: 1000,
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)',
-      borderTop: '1px solid #0842a0',
-    }}>
-      <button 
-        onClick={onStartClick}
-        style={{
-          ...styles.startButton,
-          background: 'linear-gradient(to right, rgb(49, 106, 33) 0%, #4a992d 20%, #3c8b27 80%,rgb(49, 106, 33) 100%)',
-          border: '1px solid #215315',
-          borderRadius: '8px 8px 8px 0', // Rounded top right and bottom right corners
+       // Added to ensure no padding
+        background: 'linear-gradient(to bottom, #2584ff 0%, #2584ff 5%, #1159d5 8%, #1159d5 95%, #0b47a8 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        zIndex: 1000,
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)',
+        borderTop: '1px solid #0842a0',
+          }}>
+        <button 
+          onClick={onStartClick}
+          style={{
+            ...styles.startButton,
+            background: 'linear-gradient(to right, #316A21 0%, #4a992d 20%, #3c8b27 80%, #316A21 100%)',
+            border: '1px solid #215315',
+            borderRadius: '8px 8px 8px 0', // Rounded top right and bottom right corners
           color: 'white',
           margin: '2px 0', // Removed left and right margin
           display: 'flex',
